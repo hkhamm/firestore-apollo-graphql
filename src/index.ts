@@ -1,5 +1,6 @@
 import * as admin from 'firebase-admin'
-import { ApolloServer, ApolloError, ValidationError, gql } from 'apollo-server'
+import { ApolloServer, ApolloError, ValidationError, gql, IResolvers } from 'apollo-server'
+import { DocumentNode } from 'graphql'
 
 const serviceAccount = require('../service-account.json')
 
@@ -24,7 +25,7 @@ interface Tweet {
     userId: string
 }
 
-const typeDefs = gql`
+const typeDefs: DocumentNode = gql`
     # A Twitter User
     type User {
         id: ID!
@@ -49,7 +50,7 @@ const typeDefs = gql`
     }
 `
 
-const resolvers = {
+const resolvers: IResolvers = {
     Query: {
         async tweets() {
             const tweets = await firestore.collection('tweets').get()
