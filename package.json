@@ -4,8 +4,7 @@
     "scripts": {
         "build": "tsc",
         "serve": "yarn build && node build/index.js",
-        "start": "node build/index.js",
-        "deploy": "yarn build && gcloud app deploy"
+        "start": "node build/index.js"
     },
     "main": "build/index.js",
     "dependencies": {
