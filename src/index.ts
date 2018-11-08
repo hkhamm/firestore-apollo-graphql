@@ -57,11 +57,11 @@ const typeDefs: DocumentNode = gql`
 
 const resolvers: IResolvers = {
     Query: {
-        async tweets() {
+        tweets: async () => {
             const tweets = await firestore.collection('tweets').get()
             return tweets.docs.map((tweet) => tweet.data()) as Tweet[]
         },
-        async user(_: null, args: { id: string }) {
+        user: async (_: null, args: { id: string }) => {
             try {
                 const userDoc = await firestore.doc(`users/${args.id}`).get()
                 const user = userDoc.data() as User | undefined
@@ -72,7 +72,7 @@ const resolvers: IResolvers = {
         }
     },
     Mutation: {
-        async addUser(_: null, args: { id: string; name: string; screeName: string }) {
+        addUser: async (_: null, args: { id: string; name: string; screeName: string }) => {
             try {
                 await firestore
                     .collection('users')
@@ -85,7 +85,7 @@ const resolvers: IResolvers = {
                 throw new ApolloError(error)
             }
         },
-        async addTweet(_: null, args: { id: string; text: string; userId: string }) {
+        addTweet: async (_: null, args: { id: string; text: string; userId: string }) => {
             try {
                 await firestore
                     .collection('tweets')
@@ -100,7 +100,7 @@ const resolvers: IResolvers = {
         }
     },
     User: {
-        async tweets(user) {
+        tweets: async (user) => {
             try {
                 const userTweets = await firestore
                     .collection('tweets')
@@ -113,7 +113,7 @@ const resolvers: IResolvers = {
         }
     },
     Tweet: {
-        async user(tweet) {
+        user: async (tweet) => {
             try {
                 const tweetAuthor = await firestore.doc(`users/${tweet.userId}`).get()
                 return tweetAuthor.data() as User
