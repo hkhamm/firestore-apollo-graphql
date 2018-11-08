@@ -32,11 +32,11 @@ const typeDefs: DocumentNode = gql`
         name: String!
         screenName: String!
         statusesCount: Int!
-        tweets: [Tweets]!
+        tweets: [Tweet]!
     }
 
     # A Tweet Object
-    type Tweets {
+    type Tweet {
         id: ID!
         text: String!
         userId: String!
@@ -45,8 +45,13 @@ const typeDefs: DocumentNode = gql`
     }
 
     type Query {
-        tweets: [Tweets]
+        tweets: [Tweet]
         user(id: String!): User
+    }
+
+    type Mutation {
+        addUser(id: String!, name: String!, screenName: String!): User
+        addTweet(id: ID!, text: String!, userId: String!): Tweet
     }
 `
 
@@ -66,6 +71,34 @@ const resolvers: IResolvers = {
             }
         }
     },
+    Mutation: {
+        async addUser(_: null, args: { id: string; name: string; screeName: string }) {
+            try {
+                await firestore
+                    .collection('users')
+                    .doc(args.id)
+                    .set({ ...args, statusesCount: 0 })
+                const userDoc = await firestore.doc(`users/${args.id}`).get()
+                const user = userDoc.data() as User | undefined
+                return user || new ValidationError('User ID not found')
+            } catch (error) {
+                throw new ApolloError(error)
+            }
+        },
+        async addTweet(_: null, args: { id: string; text: string; userId: string }) {
+            try {
+                await firestore
+                    .collection('tweets')
+                    .doc(args.id)
+                    .set({ ...args, likes: 0 })
+                const tweetDoc = await firestore.doc(`tweets/${args.id}`).get()
+                const tweet = tweetDoc.data() as Tweet | undefined
+                return tweet || new ValidationError('Tweet not found')
+            } catch (error) {
+                throw new ApolloError(error)
+            }
+        }
+    },
     User: {
         async tweets(user) {
             try {
@@ -79,7 +112,7 @@ const resolvers: IResolvers = {
             }
         }
     },
-    Tweets: {
+    Tweet: {
         async user(tweet) {
             try {
                 const tweetAuthor = await firestore.doc(`users/${tweet.userId}`).get()
