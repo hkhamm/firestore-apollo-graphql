@@ -50,8 +50,8 @@ const typeDefs: DocumentNode = gql`
     }
 
     type Mutation {
-        addUser(id: String!, name: String!, screenName: String!): User
-        addTweet(id: ID!, text: String!, userId: String!): Tweet
+        addUser(id: String! name: String! screenName: String!): User
+        addTweet(id: ID! text: String! userId: String!): Tweet
     }
 `
 
