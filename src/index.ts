@@ -72,7 +72,7 @@ const resolvers: IResolvers = {
         }
     },
     Mutation: {
-        addUser: async (_: null, args: { id: string, name: string, screeName: string }) => {
+        addUser: async (_: null, args: { id: string, name: string, screenName: string }) => {
             try {
                 await firestore
                     .collection('users')
