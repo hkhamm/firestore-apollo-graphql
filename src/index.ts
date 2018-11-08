@@ -72,7 +72,7 @@ const resolvers: IResolvers = {
         }
     },
     Mutation: {
-        addUser: async (_: null, args: { id: string; name: string; screeName: string }) => {
+        addUser: async (_: null, args: { id: string, name: string, screeName: string }) => {
             try {
                 await firestore
                     .collection('users')
@@ -85,7 +85,7 @@ const resolvers: IResolvers = {
                 throw new ApolloError(error)
             }
         },
-        addTweet: async (_: null, args: { id: string; text: string; userId: string }) => {
+        addTweet: async (_: null, args: { id: string, text: string, userId: string }) => {
             try {
                 await firestore
                     .collection('tweets')
