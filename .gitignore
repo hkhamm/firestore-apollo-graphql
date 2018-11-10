@@ -1,3 +1,4 @@
 node_modules/
 build/
 service-account.json
+config.ts

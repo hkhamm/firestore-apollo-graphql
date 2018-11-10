@@ -301,6 +301,13 @@
   resolved "https://registry.yarnpkg.com/@types/graphql/-/graphql-14.0.3.tgz#389e2e5b83ecdb376d9f98fae2094297bc112c1c"
   integrity sha512-TcFkpEjcQK7w8OcrQcd7iIBPjU0rdyi3ldj6d0iJ4PPSzbWqPBvXj9KSwO14hTOX2dm9RoiH7VuxksJLNYdXUQ==
 
+"@types/jsonwebtoken@^8.3.0":
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/@types/jsonwebtoken/-/jsonwebtoken-8.3.0.tgz#1fe79489df97b49273401ac3c8019cbf1dae4578"
+  integrity sha512-YKnUTR4VxwljbPORPrRon9E3uel1aD8nUdvzqArCCdMTWPvo0gnI2UZkwIHN2QATdj6HYXV/Iq3/KcecAO42Ww==
+  dependencies:
+    "@types/node" "*"
+
 "@types/lodash@^4.14.104":
   version "4.14.118"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.118.tgz#247bab39bfcc6d910d4927c6e06cbc70ec376f27"
@@ -516,7 +523,7 @@ apollo-server-errors@2.2.0:
   resolved "https://registry.yarnpkg.com/apollo-server-errors/-/apollo-server-errors-2.2.0.tgz#5b452a1d6ff76440eb0f127511dc58031a8f3cb5"
   integrity sha512-gV9EZG2tovFtT1cLuCTavnJu2DaKxnXPRNGSTo+SDI6IAk6cdzyW0Gje5N2+3LybI0Wq5KAbW6VLei31S4MWmg==
 
-apollo-server-express@2.2.0:
+apollo-server-express@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/apollo-server-express/-/apollo-server-express-2.2.0.tgz#52ebe344c463832dd3e02fd4ea5f0ad3edf59058"
   integrity sha512-E6WpImvCHKR9MHs64gTHhMrehk6/1NRE2+bblsHZg7ot8Iy6hVmzsCIzSmlPYh5uozpcyeRdC1pV0nwERtQKog==
@@ -539,17 +546,6 @@ apollo-server-plugin-base@0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/apollo-server-plugin-base/-/apollo-server-plugin-base-0.1.0.tgz#4ecf096b1f385c75c7d552b6528946181b757728"
   integrity sha512-ptaVBjR+Q1swdzsh84tY5Qb0yyTMO/IOBsBJzCdxuAKs+PAVFw7ZMQoe5bT0DJjKJXHjtfMiTF77mRLLBq2dEw==
-
-apollo-server@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/apollo-server/-/apollo-server-2.2.0.tgz#f9b737a567b2f6db2b8244ab0ff2a3272bf0acbf"
-  integrity sha512-+sxIc5t/8sBhbQXa3/dqTu/GHb5uAzaKXaWtZVW2iLudnjvAz04yN+mBmggomGBLs+7P7U0S6Ow1f5/0GA2AdA==
-  dependencies:
-    apollo-server-core "2.2.0"
-    apollo-server-express "2.2.0"
-    express "^4.0.0"
-    graphql-subscriptions "^1.0.0"
-    graphql-tools "^4.0.0"
 
 apollo-tracing@0.3.0:
   version "0.3.0"
@@ -1351,7 +1347,7 @@ expand-brackets@^2.1.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
-express@^4.0.0:
+express@^4.16.4:
   version "4.16.4"
   resolved "https://registry.yarnpkg.com/express/-/express-4.16.4.tgz#fddef61926109e24c515ea97fd2f1bdbf62df12e"
   integrity sha512-j12Uuyb4FMrd/qQAm6uCHAkPtO8FDTRJZBDd5D2KOL2eLaz1yUNdUB/NOIyq0iU4q4cFarsUCrnFDPBcnksuOg==
@@ -2224,6 +2220,21 @@ jsonwebtoken@8.1.0:
     lodash.once "^4.0.0"
     ms "^2.0.0"
     xtend "^4.0.1"
+
+jsonwebtoken@^8.3.0:
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-8.3.0.tgz#056c90eee9a65ed6e6c72ddb0a1d325109aaf643"
+  integrity sha512-oge/hvlmeJCH+iIz1DwcO7vKPkNGJHhgkspk8OH3VKlw+mbi42WtD4ig1+VXRln765vxptAv+xT26Fd3cteqag==
+  dependencies:
+    jws "^3.1.5"
+    lodash.includes "^4.3.0"
+    lodash.isboolean "^3.0.3"
+    lodash.isinteger "^4.0.4"
+    lodash.isnumber "^3.0.3"
+    lodash.isplainobject "^4.0.6"
+    lodash.isstring "^4.0.1"
+    lodash.once "^4.0.0"
+    ms "^2.1.1"
 
 jsprim@^1.2.2:
   version "1.4.1"
