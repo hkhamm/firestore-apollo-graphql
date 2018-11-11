@@ -54,13 +54,13 @@ const typeDefs: DocumentNode = gql`
 
 const resolvers: IResolvers = {
     Query: {
-        tweets: async (_: null, __: null) => {
+        tweets: async () => {
             const tweets = await firestore.collection('tweets').get()
             return tweets.docs.map((tweet) => tweet.data()) as Tweet[]
         },
-        user: async (_: null, args: { id: string }, context: { auth: string }) => {
+        user: async (_: null, { id }: { id: string }) => {
             try {
-                const userDoc = await firestore.doc(`users/${args.id}`).get()
+                const userDoc = await firestore.doc(`users/${id}`).get()
                 const user = userDoc.data() as User | undefined
                 return user || new ValidationError('User ID not found')
             } catch (error) {
@@ -69,26 +69,26 @@ const resolvers: IResolvers = {
         }
     },
     Mutation: {
-        addUser: async (_: null, args: { id: string; name: string; screenName: string }) => {
+        addUser: async (_: null, { id, name, screenName }: { id: string; name: string; screenName: string }) => {
             try {
                 await firestore
                     .collection('users')
-                    .doc(args.id)
-                    .set({ ...args, statusesCount: 0 })
-                const userDoc = await firestore.doc(`users/${args.id}`).get()
+                    .doc(id)
+                    .set({ id, name, screenName, statusesCount: 0 })
+                const userDoc = await firestore.doc(`users/${id}`).get()
                 const user = userDoc.data() as User | undefined
                 return user || new ValidationError('User ID not found')
             } catch (error) {
                 throw new ApolloError(error)
             }
         },
-        addTweet: async (_: null, args: { id: string; text: string; userId: string }) => {
+        addTweet: async (_: null, { id, text, userId }: { id: string; text: string; userId: string }) => {
             try {
                 await firestore
                     .collection('tweets')
-                    .doc(args.id)
-                    .set({ ...args, likes: 0 })
-                const tweetDoc = await firestore.doc(`tweets/${args.id}`).get()
+                    .doc(id)
+                    .set({ id, text, userId, likes: 0 })
+                const tweetDoc = await firestore.doc(`tweets/${id}`).get()
                 const tweet = tweetDoc.data() as Tweet | undefined
                 return tweet || new ValidationError('Tweet not found')
             } catch (error) {
@@ -97,7 +97,7 @@ const resolvers: IResolvers = {
         }
     },
     User: {
-        tweets: async (user) => {
+        tweets: async (user: User) => {
             try {
                 const userTweets = await firestore
                     .collection('tweets')
@@ -110,7 +110,7 @@ const resolvers: IResolvers = {
         }
     },
     Tweet: {
-        user: async (tweet) => {
+        user: async (tweet: Tweet) => {
             try {
                 const tweetAuthor = await firestore.doc(`users/${tweet.userId}`).get()
                 return tweetAuthor.data() as User

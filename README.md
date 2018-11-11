@@ -46,7 +46,7 @@ interface Tweet {
 ## Run the server
 
 ```bash
-yarn serve
+yarn start
 ```
 
 If you navigate to the URL you shoud be able to see a GraphQL playground where you can query your API.
@@ -64,20 +64,3 @@ If you navigate to the URL you shoud be able to see a GraphQL playground where y
   }
 }
 ```
-
-## Apollo Engine
-
-[Apollo Engine](https://www.apollographql.com/engine) has features such as caching, tracing, and error logging. First get an [Apollo Engine API key](https://engine.apollographql.com/) then change your Apollo server config to turn on the engine.
-
-```typescript
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  engine: {
-    apiKey: "<APOLLO ENGINE API KEY HERE>"
-  },
-  introspection: true
-});
-```
-
-Now when you yarn serve and run some queries you should see some data populate the Apollo Engine dashboard with things like how fast your queries resolved.
