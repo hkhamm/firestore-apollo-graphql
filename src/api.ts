@@ -76,8 +76,9 @@ const resolvers: IResolvers = {
                 throw new ApolloError(error)
             }
         },
-        addMessage: async (_: null, { id, text, userId }: { id: string; text: string; userId: string }) => {
+        addMessage: async (_: null, { text, userId }: { text: string, userId: string }) => {
             try {
+                const id = uuid.v4()
                 await firestore
                     .collection('messages')
                     .doc(id)
