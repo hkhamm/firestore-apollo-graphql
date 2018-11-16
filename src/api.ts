@@ -1,40 +1,25 @@
 import { ApolloServer, ApolloError, ValidationError, gql, IResolvers, AuthenticationError } from 'apollo-server-express'
 import { DocumentNode } from 'graphql'
 import firestore from './firestore'
-import * as jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { SECRET } from './config'
-
-interface User {
-    id: string
-    name: string
-    screenName: string
-    statusesCount: number
-}
-
-interface Tweet {
-    id: string
-    likes: number
-    text: string
-    userId: string
-}
+import uuid from 'uuid'
+import bcrypt from 'bcrypt'
 
 const typeDefs: DocumentNode = gql`
-    # A Twitter User
     type User {
         id: ID!
         name: String!
-        screenName: String!
-        statusesCount: Int!
-        tweets: [Tweet]!
+        email: String!
+        password: String!
+        messages: [Message]!
     }
 
-    # A Tweet Object
-    type Tweet {
+    type Message {
         id: ID!
         text: String!
         userId: String!
         user: User!
-        likes: Int!
     }
 
     type Token {
@@ -42,78 +27,91 @@ const typeDefs: DocumentNode = gql`
     }
 
     type Query {
-        tweets: [Tweet]
+        messages: [Message]
         user(id: String!): User
+        userByEmail(email: String!): User
     }
 
     type Mutation {
-        addUser(id: String!, name: String!, screenName: String!): User
-        addTweet(id: ID!, text: String!, userId: String!): Tweet
+        addUser(id: String!, name: String!): User
+        addMessage(id: ID!, text: String!, userId: String!): Message
     }
 `
 
 const resolvers: IResolvers = {
     Query: {
-        tweets: async () => {
-            const tweets = await firestore.collection('tweets').get()
-            return tweets.docs.map((tweet) => tweet.data()) as Tweet[]
+        messages: async () => {
+            const messages = await firestore.collection('messages').get()
+            return messages.docs.map((message) => message.data()) as Message[]
         },
         user: async (_: null, { id }: { id: string }) => {
             try {
                 const userDoc = await firestore.doc(`users/${id}`).get()
-                const user = userDoc.data() as User | undefined
-                return user || new ValidationError('User ID not found')
+                const user: User | undefined = userDoc.data() as User | undefined
+                return user || new ValidationError(`User with id ${id} not found`)
+            } catch (error) {
+                throw new ApolloError(error)
+            }
+        },
+        userByEmail: async (_: null, { email }: { email: string }) => {
+            try {
+                const userDoc = await firestore.collection('users').where('email', '==', email).get()
+                const users = userDoc.docs.map((user) => user.data() as User)
+                return users[0] || new ValidationError(`User with email ${email} not found`)
             } catch (error) {
                 throw new ApolloError(error)
             }
         }
     },
     Mutation: {
-        addUser: async (_: null, { id, name, screenName }: { id: string; name: string; screenName: string }) => {
+        addUser: async (_: null, { name, email, password }: { name: string, email: string, password: string }) => {
             try {
+                const saltRounds = 10
+                const hashPassword = await bcrypt.hash(password, saltRounds)
+                const id = uuid.v4()
                 await firestore
                     .collection('users')
                     .doc(id)
-                    .set({ id, name, screenName, statusesCount: 0 })
+                    .set({ id, name, email, password: hashPassword })
                 const userDoc = await firestore.doc(`users/${id}`).get()
                 const user = userDoc.data() as User | undefined
-                return user || new ValidationError('User ID not found')
+                return user || new ValidationError('Failed to retrieve added user')
             } catch (error) {
                 throw new ApolloError(error)
             }
         },
-        addTweet: async (_: null, { id, text, userId }: { id: string; text: string; userId: string }) => {
+        addMessage: async (_: null, { id, text, userId }: { id: string; text: string; userId: string }) => {
             try {
                 await firestore
-                    .collection('tweets')
+                    .collection('messages')
                     .doc(id)
                     .set({ id, text, userId, likes: 0 })
-                const tweetDoc = await firestore.doc(`tweets/${id}`).get()
-                const tweet = tweetDoc.data() as Tweet | undefined
-                return tweet || new ValidationError('Tweet not found')
+                const messageDoc = await firestore.doc(`messages/${id}`).get()
+                const message = messageDoc.data() as Message | undefined
+                return message || new ValidationError('Failed to retrieve added message')
             } catch (error) {
                 throw new ApolloError(error)
             }
         }
     },
     User: {
-        tweets: async (user: User) => {
+        messages: async (user: User) => {
             try {
-                const userTweets = await firestore
-                    .collection('tweets')
+                const userMessages = await firestore
+                    .collection('messages')
                     .where('userId', '==', user.id)
                     .get()
-                return userTweets.docs.map((tweet) => tweet.data()) as Tweet[]
+                return userMessages.docs.map((message) => message.data()) as Message[]
             } catch (error) {
                 throw new ApolloError(error)
             }
         }
     },
-    Tweet: {
-        user: async (tweet: Tweet) => {
+    Message: {
+        user: async (message: Message) => {
             try {
-                const tweetAuthor = await firestore.doc(`users/${tweet.userId}`).get()
-                return tweetAuthor.data() as User
+                const messageAuthor = await firestore.doc(`users/${message.userId}`).get()
+                return messageAuthor.data() as User
             } catch (error) {
                 throw new ApolloError(error)
             }

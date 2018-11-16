@@ -1,7 +1,9 @@
-import { ApolloServer, ValidationError, gql, IResolvers } from 'apollo-server-express'
+import { ApolloServer, ValidationError, gql, IResolvers, ApolloError } from 'apollo-server-express'
 import { DocumentNode } from 'graphql'
 import * as jwt from 'jsonwebtoken'
 import { SECRET } from './config'
+import firestore from './firestore'
+import bcrypt from 'bcrypt'
 
 const typeDefs: DocumentNode = gql`
     type Token {
@@ -15,14 +17,26 @@ const typeDefs: DocumentNode = gql`
 
 const resolvers: IResolvers = {
     Query: {
-        login: async (_: null, args: { email: string } ) => {
-            if (args.email === 'hkhamm@gmail.com') {
-                return {
-                    token: jwt.sign({}, SECRET)
+        login: async (_: null, { email, password }: { email: string, password: string } ) => {
+            try {
+                const userDoc = await firestore.collection('users').where('email', '==', email).get()
+                const users = userDoc.docs.map((user) => user.data() as User)
+                if (users.length > 0) {
+                    const match = await bcrypt.compare(password, users[0].password)
+                    if (match) {
+                        return {
+                            token: jwt.sign({}, SECRET)
+                        }
+                    } else {
+                        return new ValidationError(`User with email ${email} not found`)
+                    }
+                } else {
+                    return new ValidationError(`User with email ${email} not found`)
                 }
-            } else {
-                return new ValidationError('Email not found')
+            } catch (error) {
+                throw new ApolloError(error)
             }
+            
         }
     }
 }
