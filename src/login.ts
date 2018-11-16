@@ -1,6 +1,6 @@
 import { ApolloServer, ValidationError, gql, IResolvers, ApolloError } from 'apollo-server-express'
 import { DocumentNode } from 'graphql'
-import * as jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { SECRET } from './config'
 import firestore from './firestore'
 import bcrypt from 'bcrypt'
