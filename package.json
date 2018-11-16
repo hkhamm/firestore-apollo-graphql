@@ -4,7 +4,10 @@
     "main": "build/index.js",
     "scripts": {
         "build": "tsc",
-        "start": "yarn build && node build/index.js"
+        "start": "yarn build && node build/index.js",
+        "lint": "yarn tslint && yarn prettier",
+        "tslint": "tslint --fix -c tslint.json -p tsconfig.json 'src/**/*.{ts,tsx,js}'",
+        "prettier": "prettier --config .prettierrc --ignore-path .prettierignore --write 'src/**/*.{ts,tsx,js}'"
     },
     "dependencies": {
         "@firebase/app-types": "^0.3.2",
@@ -23,6 +26,7 @@
         "@types/jsonwebtoken": "^8.3.0",
         "@types/node": "^10.12.3",
         "@types/uuid": "^3.4.4",
+        "prettier": "^1.15.2",
         "tslint": "^5.11.0",
         "typescript": "^3.1.6"
     }

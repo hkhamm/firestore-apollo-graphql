@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken'
 import { SECRET } from './config'
 import uuid from 'uuid'
 import bcrypt from 'bcrypt'
+import { Message, User } from './types/types'
 
 const typeDefs: DocumentNode = gql`
     type User {
@@ -51,7 +52,10 @@ const resolvers: IResolvers = {
         },
         userByEmail: async (_: null, { email }: { email: string }) => {
             try {
-                const userDoc = await firestore.collection('users').where('email', '==', email).get()
+                const userDoc = await firestore
+                    .collection('users')
+                    .where('email', '==', email)
+                    .get()
                 const users = userDoc.docs.map((user) => user.data() as User)
                 return users[0] || new ValidationError(`User with email ${email} not found`)
             } catch (error) {
@@ -60,7 +64,7 @@ const resolvers: IResolvers = {
         }
     },
     Mutation: {
-        addUser: async (_: null, { name, email, password }: { name: string, email: string, password: string }) => {
+        addUser: async (_: null, { name, email, password }: { name: string; email: string; password: string }) => {
             try {
                 const saltRounds = 10
                 const hashPassword = await bcrypt.hash(password, saltRounds)
@@ -76,7 +80,7 @@ const resolvers: IResolvers = {
                 throw new ApolloError(error)
             }
         },
-        addMessage: async (_: null, { text, userId }: { text: string, userId: string }) => {
+        addMessage: async (_: null, { text, userId }: { text: string; userId: string }) => {
             try {
                 const id = uuid.v4()
                 await firestore

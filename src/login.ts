@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 import { SECRET } from './config'
 import firestore from './firestore'
 import bcrypt from 'bcrypt'
+import { User } from './types/types'
 
 const typeDefs: DocumentNode = gql`
     type Token {
@@ -17,9 +18,12 @@ const typeDefs: DocumentNode = gql`
 
 const resolvers: IResolvers = {
     Query: {
-        login: async (_: null, { email, password }: { email: string, password: string } ) => {
+        login: async (_: null, { email, password }: { email: string; password: string }) => {
             try {
-                const userDoc = await firestore.collection('users').where('email', '==', email).get()
+                const userDoc = await firestore
+                    .collection('users')
+                    .where('email', '==', email)
+                    .get()
                 const users = userDoc.docs.map((user) => user.data() as User)
                 if (users.length > 0) {
                     const match = await bcrypt.compare(password, users[0].password)
@@ -36,7 +40,6 @@ const resolvers: IResolvers = {
             } catch (error) {
                 throw new ApolloError(error)
             }
-            
         }
     }
 }
