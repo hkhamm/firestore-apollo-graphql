@@ -11,7 +11,7 @@ const typeDefs: DocumentNode = gql`
     }
 
     type Query {
-        login(email: String!): Token
+        login(email: String!, password: String!): Token
     }
 `
 

@@ -22,10 +22,6 @@ const typeDefs: DocumentNode = gql`
         user: User!
     }
 
-    type Token {
-        token: String!
-    }
-
     type Query {
         messages: [Message]
         user(id: String!): User
