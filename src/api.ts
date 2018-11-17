@@ -1,17 +1,17 @@
 import {
-    ApolloServer,
     ApolloError,
-    ValidationError,
-    IResolvers,
+    ApolloServer,
     AuthenticationError,
-    IResolverObject
+    IResolverObject,
+    IResolvers,
+    ValidationError
 } from 'apollo-server-express'
-import firestore from './firestore'
 import jwt from 'jsonwebtoken'
-import { SECRET } from './config'
 import uuid from 'uuid'
-import { Message, User } from './types'
+import { SECRET } from './config'
+import firestore from './firestore'
 import { typeDefs } from './typeDefs'
+import { Message, User } from './types'
 
 const resolvers: IResolvers = {
     Query: {

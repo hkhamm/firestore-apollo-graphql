@@ -1,6 +1,6 @@
 import express from 'express'
-import login from './login'
 import api from './api'
+import login from './login'
 
 const app = express()
 login.applyMiddleware({ app, path: '/login' })

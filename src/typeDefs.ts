@@ -1,5 +1,5 @@
-import { DocumentNode } from 'graphql'
 import { gql } from 'apollo-server-express'
+import { DocumentNode } from 'graphql'
 
 export const typeDefs: DocumentNode = gql`
     type User {

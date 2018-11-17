@@ -1,11 +1,11 @@
-import { ApolloServer, ValidationError, IResolvers, ApolloError, IResolverObject } from 'apollo-server-express'
+import { ApolloError, ApolloServer, IResolverObject, IResolvers, ValidationError } from 'apollo-server-express'
+import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import uuid from 'uuid'
 import { SECRET } from './config'
 import firestore from './firestore'
-import bcrypt from 'bcrypt'
-import { User } from './types'
 import { typeDefs } from './typeDefs'
-import uuid from 'uuid'
+import { User } from './types'
 
 const resolvers: IResolvers = {
     Query: {
