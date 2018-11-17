@@ -1,11 +1,18 @@
-import { ApolloServer, ApolloError, ValidationError, IResolvers, AuthenticationError, IResolverObject } from 'apollo-server-express'
+import {
+    ApolloServer,
+    ApolloError,
+    ValidationError,
+    IResolvers,
+    AuthenticationError,
+    IResolverObject
+} from 'apollo-server-express'
 import firestore from './firestore'
 import jwt from 'jsonwebtoken'
 import { SECRET } from './config'
 import uuid from 'uuid'
 import { Message, User } from './types'
 import { typeDefs } from './typeDefs'
- 
+
 const resolvers: IResolvers = {
     Query: {
         messages: async () => {
