@@ -1,20 +1,11 @@
-import { ApolloServer, ValidationError, gql, IResolvers, ApolloError } from 'apollo-server-express'
-import { DocumentNode } from 'graphql'
+import { ApolloServer, ValidationError, IResolvers, ApolloError, IResolverObject } from 'apollo-server-express'
 import jwt from 'jsonwebtoken'
 import { SECRET } from './config'
 import firestore from './firestore'
 import bcrypt from 'bcrypt'
-import { User } from './types/types'
-
-const typeDefs: DocumentNode = gql`
-    type Token {
-        token: String!
-    }
-
-    type Query {
-        login(email: String!, password: String!): Token
-    }
-`
+import { User } from './types'
+import { typeDefs } from './typeDefs'
+import uuid from 'uuid'
 
 const resolvers: IResolvers = {
     Query: {
@@ -32,16 +23,34 @@ const resolvers: IResolvers = {
                             token: jwt.sign({}, SECRET)
                         }
                     } else {
-                        return new ValidationError(`User with email ${email} not found`)
+                        return new ValidationError(`Invalid password for user ${email}`)
                     }
                 } else {
-                    return new ValidationError(`User with email ${email} not found`)
+                    return new ValidationError(`User ${email} not found`)
                 }
             } catch (error) {
                 throw new ApolloError(error)
             }
         }
-    }
+    } as IResolverObject,
+    Mutation: {
+        addUser: async (_: null, { name, email, password }: { name: string; email: string; password: string }) => {
+            try {
+                const saltRounds = 10
+                const hashedPassword = await bcrypt.hash(password, saltRounds)
+                const id = uuid.v4()
+                await firestore
+                    .collection('users')
+                    .doc(id)
+                    .set({ id, name, email, password: hashedPassword })
+                const userDoc = await firestore.doc(`users/${id}`).get()
+                const user = userDoc.data() as User | undefined
+                return user || new ValidationError('Failed to retrieve added user')
+            } catch (error) {
+                throw new ApolloError(error)
+            }
+        }
+    } as IResolverObject
 }
 
 const login = new ApolloServer({

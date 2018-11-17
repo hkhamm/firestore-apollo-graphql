@@ -1,40 +1,11 @@
-import { ApolloServer, ApolloError, ValidationError, gql, IResolvers, AuthenticationError } from 'apollo-server-express'
-import { DocumentNode } from 'graphql'
+import { ApolloServer, ApolloError, ValidationError, IResolvers, AuthenticationError, IResolverObject } from 'apollo-server-express'
 import firestore from './firestore'
 import jwt from 'jsonwebtoken'
 import { SECRET } from './config'
 import uuid from 'uuid'
-import bcrypt from 'bcrypt'
-import { Message, User } from './types/types'
-
-const typeDefs: DocumentNode = gql`
-    type User {
-        id: ID!
-        name: String!
-        email: String!
-        password: String!
-        messages: [Message]!
-    }
-
-    type Message {
-        id: ID!
-        text: String!
-        userId: String!
-        user: User!
-    }
-
-    type Query {
-        messages: [Message]
-        user(id: String!): User
-        userByEmail(email: String!): User
-    }
-
-    type Mutation {
-        addUser(id: String!, name: String!): User
-        addMessage(id: ID!, text: String!, userId: String!): Message
-    }
-`
-
+import { Message, User } from './types'
+import { typeDefs } from './typeDefs'
+ 
 const resolvers: IResolvers = {
     Query: {
         messages: async () => {
@@ -62,31 +33,15 @@ const resolvers: IResolvers = {
                 throw new ApolloError(error)
             }
         }
-    },
+    } as IResolverObject,
     Mutation: {
-        addUser: async (_: null, { name, email, password }: { name: string; email: string; password: string }) => {
-            try {
-                const saltRounds = 10
-                const hashPassword = await bcrypt.hash(password, saltRounds)
-                const id = uuid.v4()
-                await firestore
-                    .collection('users')
-                    .doc(id)
-                    .set({ id, name, email, password: hashPassword })
-                const userDoc = await firestore.doc(`users/${id}`).get()
-                const user = userDoc.data() as User | undefined
-                return user || new ValidationError('Failed to retrieve added user')
-            } catch (error) {
-                throw new ApolloError(error)
-            }
-        },
         addMessage: async (_: null, { text, userId }: { text: string; userId: string }) => {
             try {
                 const id = uuid.v4()
                 await firestore
                     .collection('messages')
                     .doc(id)
-                    .set({ id, text, userId, likes: 0 })
+                    .set({ id, text, userId })
                 const messageDoc = await firestore.doc(`messages/${id}`).get()
                 const message = messageDoc.data() as Message | undefined
                 return message || new ValidationError('Failed to retrieve added message')
@@ -94,7 +49,7 @@ const resolvers: IResolvers = {
                 throw new ApolloError(error)
             }
         }
-    },
+    } as IResolverObject,
     User: {
         messages: async (user: User) => {
             try {
@@ -124,7 +79,7 @@ export const api = new ApolloServer({
     typeDefs,
     resolvers,
     introspection: true,
-    context: async ({ req }) => {
+    context: async ({ req }: { req: { headers: { authorization: string } } }) => {
         if (req.headers && req.headers.authorization) {
             const token = req.headers.authorization
             const decoded = jwt.verify(token, SECRET)
