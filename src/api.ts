@@ -65,7 +65,6 @@ const resolvers: IResolvers = {
                     .doc(id)
                     .delete()
                 return { success: true }
-                return
             } catch (error) {
                 throw new ApolloError(error)
             }
