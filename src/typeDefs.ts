@@ -23,7 +23,7 @@ export const typeDefs: DocumentNode = gql`
         userId: String!
     }
 
-    type DeleteResponse {
+    type RemoveResponse {
         success: Boolean!
     }
 
@@ -37,6 +37,6 @@ export const typeDefs: DocumentNode = gql`
     type Mutation {
         addUser(name: String!, username: String!, password: String!): User
         addMessage(text: String!, userId: String!): Message
-        removeMessage(id: String!): DeleteResponse
+        removeMessage(id: String!): RemoveResponse
     }
 `
