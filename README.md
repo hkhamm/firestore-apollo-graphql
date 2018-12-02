@@ -26,6 +26,13 @@ After you click the button, a JSON file containing your service account's creden
 
 From the Firebase console, create a new Firestore database.
 
+### Authorization Setup
+
+Create a file named `config.ts` and place it in src. Add a line like this, with your own secret that will be used to create the JWTs:
+```
+export default SECRET = 'sdfasdfasdfafdafdasfs'
+```
+
 ## Run the server
 
 ```bash
