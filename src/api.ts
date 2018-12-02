@@ -101,12 +101,16 @@ export const api = new ApolloServer({
     resolvers,
     introspection: true,
     context: async ({ req }: { req: { headers: { authorization: string } } }) => {
-        if (req.headers && req.headers.authorization) {
+        if (
+            req.headers &&
+            req.headers.authorization &&
+            req.headers.authorization !== '' &&
+            req.headers.authorization !== 'null'
+        ) {
             const token = req.headers.authorization
-            const decoded = jwt.verify(token, SECRET)
-            if (decoded) {
-                return
-            } else {
+            try {
+                jwt.verify(token, SECRET)
+            } catch (error) {
                 throw new AuthenticationError('Unauthorized - the JWT token is invalid')
             }
         } else {
