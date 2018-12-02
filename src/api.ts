@@ -7,6 +7,7 @@ import {
     ValidationError
 } from 'apollo-server-express'
 import jwt from 'jsonwebtoken'
+import moment from 'moment'
 import uuid from 'uuid'
 import { SECRET } from './config'
 import firestore from './firestore'
@@ -28,14 +29,14 @@ const resolvers: IResolvers = {
                 throw new ApolloError(error)
             }
         },
-        userByEmail: async (_: null, { email }: { email: string }) => {
+        userByUsername: async (_: null, { username }: { username: string }) => {
             try {
                 const userDoc = await firestore
                     .collection('users')
-                    .where('email', '==', email)
+                    .where('username', '==', username)
                     .get()
                 const users = userDoc.docs.map((user) => user.data() as User)
-                return users[0] || new ValidationError(`User with email ${email} not found`)
+                return users[0] || new ValidationError(`User with username ${username} not found`)
             } catch (error) {
                 throw new ApolloError(error)
             }
@@ -45,13 +46,26 @@ const resolvers: IResolvers = {
         addMessage: async (_: null, { text, userId }: { text: string; userId: string }) => {
             try {
                 const id = uuid.v4()
+                const date = moment().toISOString()
                 await firestore
                     .collection('messages')
                     .doc(id)
-                    .set({ id, text, userId })
+                    .set({ id, text, userId, date })
                 const messageDoc = await firestore.doc(`messages/${id}`).get()
                 const message = messageDoc.data() as Message | undefined
                 return message || new ValidationError('Failed to retrieve added message')
+            } catch (error) {
+                throw new ApolloError(error)
+            }
+        },
+        removeMessage: async (_: null, { id }: { id: string }) => {
+            try {
+                await firestore
+                    .collection('messages')
+                    .doc(id)
+                    .delete()
+                return { success: true }
+                return
             } catch (error) {
                 throw new ApolloError(error)
             }

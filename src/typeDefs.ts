@@ -5,7 +5,7 @@ export const typeDefs: DocumentNode = gql`
     type User {
         id: ID!
         name: String!
-        email: String!
+        username: String!
         password: String!
         messages: [Message]!
     }
@@ -14,22 +14,29 @@ export const typeDefs: DocumentNode = gql`
         id: ID!
         text: String!
         userId: String!
+        date: String!
         user: User!
     }
 
     type Token {
         token: String!
+        userId: String!
+    }
+
+    type DeleteResponse {
+        success: Boolean!
     }
 
     type Query {
         messages: [Message]
         user(id: String!): User
-        userByEmail(email: String!): User
-        login(email: String!, password: String!): Token
+        userByUsername(username: String!): User
+        login(username: String!, password: String!): Token
     }
 
     type Mutation {
-        addUser(name: String!, email: String!, password: String!): User
+        addUser(name: String!, username: String!, password: String!): User
         addMessage(text: String!, userId: String!): Message
+        removeMessage(id: String!): DeleteResponse
     }
 `
