@@ -20,7 +20,7 @@ yarn install
 2. Navigate to the Service Accounts tab in your project's settings page.
 3. Click the Generate New Private Key button at the bottom of the Firebase Admin SDK section of the Service Accounts tab.
 
-After you click the button, a JSON file containing your service account's credentials will be downloaded. Rename this to `service-account.json` and add it to the top level of the repo (e.g. `/path/to/firebase-firestore-graphql/service-account.json`).
+After you click the button, a JSON file containing your service account's credentials will be downloaded. Rename this to `service-account.json` and add it to src.
 
 #### Firestore
 
