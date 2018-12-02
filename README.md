@@ -30,7 +30,7 @@ From the Firebase console, create a new Firestore database.
 
 Create a file named `config.ts` and place it in src. Add a line like this, with your own secret that will be used to create the JWTs:
 ```
-export default SECRET = 'sdfasdfasdfafdafdasfs'
+export const SECRET = 'sdfasdfasdfafdafdasfs'
 ```
 
 ## Run the server
