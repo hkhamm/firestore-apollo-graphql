@@ -24,24 +24,7 @@ After you click the button, a JSON file containing your service account's creden
 
 #### Firestore
 
-1. From the Firebase console, create a new Firestore database.
-2. Create two collections, one of tweets and one of users. Follow these types:
-
-```typescript
-interface User {
-    id: string
-    name: string
-    screenName: string
-    statusesCount: number
-}
-
-interface Tweet {
-    id: string
-    likes: number
-    text: string
-    userId: string
-}
-```
+From the Firebase console, create a new Firestore database.
 
 ## Run the server
 
@@ -55,11 +38,10 @@ If you navigate to the URL you shoud be able to see a GraphQL playground where y
 
 ```graphql
 {
-  user(id: "1") {
+  user(id: "1sdfjk3s-sdfjk32fdkdjsf-sdfsd") {
     name
-    tweets {
+    messages {
       text
-      likes
     }
   }
 }
