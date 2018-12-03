@@ -7,7 +7,8 @@ export const typeDefs: DocumentNode = gql`
         name: String!
         username: String!
         password: String!
-        messages: [Message]!
+        messages: Messages!
+        moreMessages: Messages!
     }
 
     type Message {
@@ -18,17 +19,25 @@ export const typeDefs: DocumentNode = gql`
         user: User!
     }
 
+    type Messages {
+        cursor: String!
+        data: [Message]!
+    }
+
     type Token {
         token: String!
         userId: String!
     }
 
     type RemoveResponse {
-        success: Boolean!
+        id: String!
     }
 
     type Query {
-        messages: [Message]
+        messages: Messages
+        moreMessages(cursor: String!): Messages
+        messagesByUserId(id: String!): Messages
+        moreMessagesByUserId(id: String!, cursor: String!): Messages
         user(id: String!): User
         userByUsername(username: String!): User
         login(username: String!, password: String!): Token

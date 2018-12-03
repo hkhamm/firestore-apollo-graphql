@@ -1,13 +1,18 @@
 export interface User {
     id: string
     name: string
-    email: string
+    username: string
     password: string
 }
 
 export interface Message {
     id: string
-    likes: number
     text: string
+    date: string
     userId: string
+}
+
+export interface Messages {
+    data: Message[]
+    cursor: string
 }
