@@ -28,7 +28,7 @@ const resolvers: IResolvers = {
             const response = await firestore
                 .collection('messages')
                 .where('date', '>', cursor)
-                .limit(5)
+                // .limit(5)
                 .get()
             const messages = response.docs.map((message) => message.data()) as Message[]
             return {
@@ -40,7 +40,7 @@ const resolvers: IResolvers = {
             const response = await firestore
                 .collection('messages')
                 .where('userId', '==', id)
-                .limit(5)
+                // .limit(5)
                 .get()
             const data = response.docs.map((message) => message.data()) as Message[]
             const cursor = data[data.length - 1].date ? data[data.length - 1].date : ''
@@ -54,7 +54,7 @@ const resolvers: IResolvers = {
                 .collection('messages')
                 .where('date', '>', cursor)
                 .where('userId', '==', id)
-                .limit(5)
+                // .limit(5)
                 .get()
             const data = response.docs.map((message) => message.data()) as Message[]
             const newCursor = data[data.length - 1].date ? data[data.length - 1].date : ''
@@ -119,7 +119,7 @@ const resolvers: IResolvers = {
                 const userMessages = await firestore
                     .collection('messages')
                     .where('userId', '==', user.id)
-                    .limit(5)
+                    // .limit(5)
                     .get()
                 const messages = userMessages.docs.map((message) => message.data()) as Message[]
                 return {
@@ -136,7 +136,7 @@ const resolvers: IResolvers = {
                     .collection('messages')
                     .where('userId', '==', user.id)
                     .where('date', '<', cursor)
-                    .limit(5)
+                    // .limit(5)
                     .get()
                 const messages = response.docs.map((message) => message.data()) as Message[]
                 return {
